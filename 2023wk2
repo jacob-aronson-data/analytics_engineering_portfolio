@@ -1,0 +1,44 @@
+-- 2023 Week 2 --
+with transactions_clean as (
+    select regexp_replace(sort_code, '-', '') as sort_code,
+           'GB' as country_code,
+           transaction_id,
+           account_number,
+           bank
+    from pd2023_wk02_transactions
+)
+select t.transaction_id,
+       concat(to_varchar(t.country_code), 
+              to_varchar(check_digits), 
+              sc.swift_code, to_varchar(t.sort_code), 
+              to_varchar(t.account_number)) as IBAN
+from pd2023_wk02_swift_codes sc
+join transactions_clean t
+on sc.bank = t.bank;
+
+-- 2023 Week 3 -- 
+with parsed_transactions as(
+    select 
+       case when online_or_in_person = 1 then 'Online' else 'In-Person' end as online_or_in_person,
+       quarter(to_date(left(transaction_date, 10), 'DD/MM/YYYY')) as transaction_quarter,
+       sum(value) as total_transaction_value
+    from pd2023_wk01
+    where left(transaction_code, 3) = 'DSB'
+    group by online_or_in_person, transaction_quarter
+),
+
+pivoted_targets as (
+    select Q1 as value, online_or_in_person, 1 as quarter from pd2023_wk03_targets union all
+    select Q2 as value, online_or_in_person, 2 as quarter from pd2023_wk03_targets union all
+    select Q3 as value, online_or_in_person, 3 as quarter from pd2023_wk03_targets union all
+    select Q4 as value, online_or_in_person, 4 as quarter from pd2023_wk03_targets
+)
+
+select trans.online_or_in_person as "Online or In-Person",
+       trans.transaction_quarter as "Quarter", 
+       trans.total_transaction_value as "Value",
+       targets.value as "Quarterly Targets",
+       trans.total_transaction_value - targets.value as "Variance to Target"
+from parsed_transactions trans
+join pivoted_targets targets
+on trans.transaction_quarter = targets.quarter and trans.online_or_in_person = targets.online_or_in_person;
