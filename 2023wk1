@@ -1,0 +1,23 @@
+-- 2023 Week 1 --
+select replace(left(transaction_code, 3), '-', '') as Bank, sum(value) as Value
+from PD2023_WK01
+group by all;
+
+select replace(left(transaction_code, 3), '-', '') as Bank, 
+       case when online_or_in_person = 1 then 'Online' ELSE 'In-Person' END as "Online or In-Person",
+       CASE dayofweek(to_date(left(transaction_date, 10), 'DD/MM/YYYY'))
+            WHEN 0 THEN 'Sunday'
+            when 1 then 'Monday'
+            when 2 then 'tuesday'
+            when 3 then 'wednesday'
+            when 4 then 'thursday'
+            when 5 then 'friday'
+            when 6 then 'saturday'
+            else 'other' end as "Transaction Date",
+       sum(value) as Value
+from PD2023_WK01
+group by all;
+
+select replace(left(transaction_code, 3), '-', '') as Bank, customer_code, sum(value) as Value
+from PD2023_WK01
+group by all;
