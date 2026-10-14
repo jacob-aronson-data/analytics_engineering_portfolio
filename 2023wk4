@@ -1,0 +1,33 @@
+-- 2023 Week 4 --
+with full_year as (
+    select *, 1 as month from pd2023_wk04_january union all
+    select *, 2 as month from pd2023_wk04_february union all
+    select *, 3 as month from pd2023_wk04_march union all
+    select *, 4 as month from pd2023_wk04_april union all
+    select *, 5 as month from pd2023_wk04_may union all
+    select *, 6 as month from pd2023_wk04_june union all
+    select *, 7 as month from pd2023_wk04_july union all
+    select *, 8 as month from pd2023_wk04_august union all
+    select *, 9 as month from pd2023_wk04_september union all
+    select *, 10 as month from pd2023_wk04_october union all
+    select *, 11 as month from pd2023_wk04_november union all
+    select *, 12 as month from pd2023_wk04_december
+)
+
+select id, 
+       to_date(
+            concat(
+                to_varchar(min(joining_day)),
+                '/',
+                to_varchar(min(month)),
+                '/',
+                to_varchar('2023')
+                ),
+            'DD/MM/YYYY'
+            ) as "Joining Date",
+       max(case when demographic = 'Account Type' then value else null end) as "Account_Type",
+       max(case when demographic = 'Date of Birth' then to_date(value) else null end) as "Date of Birth",
+       max(case when demographic = 'Ethnicity' then value else null end) as Ethnicity,
+
+from full_year
+group by id
