@@ -1,0 +1,54 @@
+-- 2023 Week 8 --
+with full_year as (
+    select *, 1 as file_date from pd2023_wk08_01 union all
+    select *, 2 as file_date from pd2023_wk08_02 union all
+    select *, 3 as file_date from pd2023_wk08_03 union all
+    select *, 4 as file_date from pd2023_wk08_04 union all
+    select *, 5 as file_date from pd2023_wk08_05 union all
+    select *, 6 as file_date from pd2023_wk08_06 union all
+    select *, 7 as file_date from pd2023_wk08_07 union all
+    select *, 8 as file_date from pd2023_wk08_08 union all
+    select *, 9 as file_date from pd2023_wk08_09 union all
+    select *, 10 as file_date from pd2023_wk08_10 union all
+    select *, 11 as file_date from pd2023_wk08_11 union all
+    select *, 12 as file_date from pd2023_wk08_12
+),
+
+transform1 as (
+    select *, 
+        case 
+            when right(market_cap, 1) = 'B' then (replace(replace(replace(market_cap, 'B', ''), ',', ''), '$', ''))::float * 1000000000
+            when right(market_cap, 1) = 'M' then (replace(replace(replace(market_cap, 'M', ''), ',', ''), '$', ''))::float * 1000000
+            else -999 end as market_cap_clean,
+        case
+            when replace(purchase_price, '$', '') < 25000 then 'Low'
+            when replace(purchase_price, '$', '') < 50000 then 'Medium'
+            when replace(purchase_price, '$', '') < 75000 then 'High'
+            when replace(purchase_price, '$', '') <= 100000 then 'Very High'
+            else 'broken' end as pp_group
+    from full_year
+    where market_cap != 'n/a'
+),
+
+transform2 as (
+    select *,
+        case
+            when market_cap_clean < 100000000 then 'Small'
+            when market_cap_clean < 1000000000 then 'Medium'
+            when market_cap_clean < 100000000000 then 'Large'
+            else 'Huge' end as mc_group
+    from transform1
+)
+
+select mc_group,
+       pp_group,
+       file_date,
+       ticker,
+       sector,
+       market,
+       stock_name,
+       market_cap_clean as "Market Capitalisation",
+       purchase_price,
+       rank() over (partition by file_date, pp_group, mc_group order by purchase_price desc) as Rank
+from transform2
+qualify Rank <= 5
