@@ -1,0 +1,46 @@
+-- 2023 Week 7 --
+with tp as (
+    select transaction_id, 
+           account_to, 
+           account_from as "Account From"
+    from pd2023_wk07_transaction_path
+),
+
+td as (
+    select *
+    from pd2023_wk07_transaction_detail
+),
+
+ai as (
+    select *
+    from pd2023_wk07_account_information,
+    LATERAL SPLIT_TO_TABLE(account_holder_id, ',')
+    where not account_holder_id is null
+),
+
+ah as (
+    select *
+    from pd2023_wk07_account_holders
+    where left(contact_number, 1) = '7'
+)
+
+select td.transaction_id as "Transaction ID",
+       tp.account_to as "Account To",
+       td.transaction_date as "Transaction Date",
+       ai.value as "Value",
+       ai.account_number as "Account Number",
+       ai.account_type as "Account Type",
+       balance_date as "Balance Date",
+       balance as "Balance",
+       ah.name as "Name",
+       ah.date_of_birth as "Date of Birth",
+       contact_number as "Contact Number",
+       first_line_of_address as "First Line of Address"
+       
+from ah
+    join ai on ah.account_holder_id = ai.value
+    join tp on ai.account_number = tp."Account From"
+    join td on tp.transaction_id = td.transaction_id
+where td.cancelled_ = 'N' and
+      td.value > 1000 and
+      ai.account_type != 'Platinum'
