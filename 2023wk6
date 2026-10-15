@@ -1,0 +1,60 @@
+-- 2023 Week 6 --
+with mobile_answers as (
+    select customer_id, value, question
+    from pd2023_wk06_dsb_customer_survey
+    unpivot (
+        value for question in (MOBILE_APP___EASE_OF_USE, 
+                               MOBILE_APP___EASE_OF_ACCESS, 
+                               MOBILE_APP___NAVIGATION, 
+                               MOBILE_APP___LIKELIHOOD_TO_RECOMMEND))
+),
+
+online_answers as (
+    select customer_id, value, question
+    from pd2023_wk06_dsb_customer_survey
+    unpivot (
+        value for question in (ONLINE_INTERFACE___EASE_OF_USE, 
+                               ONLINE_INTERFACE___EASE_OF_ACCESS,
+                               ONLINE_INTERFACE___NAVIGATION, 
+                               ONLINE_INTERFACE___LIKELIHOOD_TO_RECOMMEND)
+    )
+),
+
+unpivoted as (
+    select m.customer_id, m.question, m.value as mobile_value, o.question, o.value as online_value
+    from mobile_answers m
+        join online_answers o
+        on SPLIT_PART(m.question, '__', 2) = SPLIT_PART(o.question, '__', 2) and 
+           m.customer_id = o.customer_id
+),
+
+averages as (
+    select customer_id, avg(mobile_value) - avg(online_value) as diff
+    from unpivoted
+    group by customer_id
+),
+
+classify as (
+    select customer_id,
+        case
+            when diff >= 2 then 'Mobile App Superfan'
+            when diff >= 1 then 'Mobile App Fan'
+            when diff > -1 then 'Neutral'
+            when diff >= -2 then 'Online Interface Fan'
+            when diff <  -2 then 'Online Interface Superfan'
+            else 'broken' end as category
+    from averages
+),
+
+counts as (
+    select category, count(*) as cnt
+    from classify
+    group by category
+),
+
+totals as (select sum(cnt) as grand_total from counts)
+
+select category, round((cnt / grand_total) * 100, 1) as "% of Total"
+from counts
+join totals
+order by category
