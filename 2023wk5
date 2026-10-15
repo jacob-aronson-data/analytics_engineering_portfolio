@@ -1,0 +1,48 @@
+-- 2023 Week 5 -- 
+with grouped as (
+    select --*,
+       replace(left(transaction_code, 3), '-', '') as bank
+       ,month(to_date(left(transaction_date, 10), 'DD/MM/YYYY')) as transaction_date
+       ,sum((value)) as total_value
+       --,rank() over (partition by transaction_date order by total_value) as val_rank
+    from pd2023_wk01
+    group by all
+),
+ranked as (
+    select
+        case 
+            when transaction_date = 1 then 'January'
+            when transaction_date = 2 then 'February'
+            when transaction_date = 3 then 'March'
+            when transaction_date = 4 then 'April'
+            when transaction_date = 5 then 'May'
+            when transaction_date = 6 then 'June'
+            when transaction_date = 7 then 'July'
+            when transaction_date = 8 then 'August'
+            when transaction_date = 9 then 'September'
+            when transaction_date = 10 then 'October'
+            when transaction_date = 11 then 'November'
+            when transaction_date = 12 then 'December'
+            else 'broken' end as "Transaction Date",
+
+        bank,
+        total_value as Value,
+        rank() over (partition by transaction_date order by total_value desc) as "Bank Rank per Month"
+from grouped
+),
+rank_averages as (
+    select avg(Value) as "Avg Transaction Value per Rank", "Bank Rank per Month"
+    from ranked
+    group by "Bank Rank per Month"
+),
+bank_averages as (
+    select avg("Bank Rank per Month") as "Avg Rank per Bank", bank
+    from ranked
+    group by bank
+)
+
+select g.*, r."Avg Transaction Value per Rank", b."Avg Rank per Bank"
+from ranked g 
+    join rank_averages r on g."Bank Rank per Month" = r."Bank Rank per Month"
+    join bank_averages b on g.bank = b.bank
+order by g."Transaction Date"
