@@ -1,0 +1,49 @@
+--2023 Week 9--
+with incoming_transactions as (
+    select ai.account_number, td.value, td.transaction_date, ai.balance_date, ai.balance
+    from pd2023_wk07_transaction_path tp
+    join pd2023_wk07_transaction_detail td on 
+        tp.transaction_id = td.transaction_id
+    right join pd2023_wk07_account_information ai on
+        tp.account_to = ai.account_number
+    where td.cancelled_ = 'N'),
+
+outgoing_transactions as(
+    select ai.account_number, -1 * td.value as value, td.transaction_date, ai.balance_date, ai.balance
+    from pd2023_wk07_transaction_path tp
+    join pd2023_wk07_transaction_detail td on 
+        tp.transaction_id = td.transaction_id
+    right join pd2023_wk07_account_information ai on
+        tp.account_from = ai.account_number
+    where td.cancelled_ = 'N'
+),
+
+nullified as (
+    select 
+        account_number, 
+        NULL as value, 
+        '2023-01-31' as transaction_date, 
+        balance_date, 
+        balance
+    from pd2023_wk07_account_information
+),
+
+unioned as (
+    table incoming_transactions
+    union all
+    table outgoing_transactions
+    union all
+    table nullified
+)
+
+--select count(distinct account_number) from unioned
+
+select account_number as "Account Number", 
+       transaction_date as "Balance Date",
+       value as "Transaction Value",
+       --balance as original_balance,
+       SUM(IFNULL(value, balance)) OVER (PARTITION BY account_number ORDER BY transaction_date, value) as "Balance"
+from unioned
+--where account_number = 48434572
+group by account_number, transaction_date, value, balance
+order by account_number, transaction_date asc
