@@ -1,0 +1,185 @@
+use schema TIL_PLAYGROUND.cs4_data_bank;
+
+-- How many unique nodes are there on the Data Bank system? --
+select count(distinct node_id) from customer_nodes;
+
+-- What is the number of nodes per region? -- 
+select region_id, count(distinct node_id)
+from customer_nodes 
+group by region_id;
+
+-- How many customers are allocated to each region? --
+select region_id, count(distinct customer_id)
+from customer_nodes 
+group by region_id;
+
+-- How many days on average are customers reallocated to a different node? --
+with cte as (
+select customer_id, 
+       node_id, 
+       sum(datediff(day, start_date, iff(end_date > '9999-12-30', current_date(), end_date))) as days_on_node
+
+from customer_nodes
+where end_date < '9999-12-31'
+group by customer_id, node_id
+)
+select 
+avg(days_on_node) as avg_days_on_node
+from cte;
+
+-- What is the median, 80th and 95th percentile for this same reallocation days metric for each region? -- 
+with cte as (
+select customer_id, 
+       node_id,
+       region_id,
+       sum(datediff(day, start_date, iff(end_date > '9999-12-30', current_date(), end_date))) as days_on_node
+
+from customer_nodes
+where end_date < '9999-12-31'
+group by all
+)
+
+select region_id,
+       median(days_on_node) as median_days_on_node,
+       approx_percentile(days_on_node, 0.8) as percentile80,
+       approx_percentile(days_on_node, 0.95) as percentile95
+from cte
+group by region_id;
+
+-- What is the unique count and total amount for each transaction type? --
+select txn_type, count(*) as unique_count, sum(txn_amount) as total_amount
+from customer_transactions
+group by txn_type;
+
+-- What is the average total historical deposit counts and amounts for all customers? --
+select customer_id, count(*) as deposit_count, round(avg(txn_amount), 2) as avg_amount
+from customer_transactions
+group by customer_id
+order by customer_id asc;
+
+-- For each month - how many Data Bank customers make more than 1 deposit and either 1 purchase or 1 withdrawal in a single month? --
+with grouped as (
+    select customer_id,
+       date_trunc(month, txn_date) as txn_month,
+       sum(iff(txn_type = 'deposit', 1, 0)) as deposit_count,
+       sum(iff(txn_type = 'withdrawal', 1, 0)) as withdrawal_count,
+       sum(iff(txn_type = 'purchase', 1, 0)) as purchase_count,
+    from customer_transactions 
+    group by all
+)
+
+select txn_month, count(distinct customer_id)
+from grouped
+-- if the below is an exclusive or, it would be (purchase_count + withdrawal_count) = 1 --
+where deposit_count > 0 and (purchase_count = 1 or withdrawal_count = 1)
+group by txn_month
+order by txn_month asc;
+
+
+-- What is the closing balance for each customer at the end of the month? --
+with grouped as (
+    select customer_id,
+       date_trunc(month, txn_date) as txn_month,
+       sum(txn_amount) as monthly_total
+    from customer_transactions
+    group by customer_id, txn_month
+)
+select customer_id,
+       txn_month,
+       monthly_total,
+       sum(monthly_total) over (partition by customer_id order by txn_month) as running_balance
+from grouped
+order by customer_id asc, txn_month asc;
+
+-- What is the percentage of customers who increase their closing balance by more than 5%? --
+with grouped as (
+    select customer_id,
+       date_trunc(month, txn_date) as txn_month,
+       sum(txn_amount) as monthly_total
+    from customer_transactions
+    group by customer_id, txn_month
+),
+
+monthly_balances as (
+    select customer_id,
+       txn_month,
+       monthly_total,
+       sum(monthly_total) over (partition by customer_id order by txn_month) as running_balance
+    from grouped
+    order by customer_id asc, txn_month asc
+),
+
+month_extremes as (
+    select customer_id,
+           min(txn_month) as min_month,
+           max(txn_month) as max_month
+    from monthly_balances
+    group by all
+),
+
+month_extremes_joined as (
+    select mb.customer_id, 
+           iff(mb.txn_month = me.min_month, mb.running_balance, null) as earliest_balance,
+           iff(mb.txn_month = me.max_month, mb.running_balance, null) as latest_balance
+    from monthly_balances mb join month_extremes me on mb.customer_id = me.customer_id
+),
+
+percent_changes as (
+    select customer_id, min(earliest_balance) as earliest, max(latest_balance) as latest, 
+    (max(latest_balance) - max(earliest_balance)) / max(earliest_balance) * 100 as balance_pct_change
+    from month_extremes_joined
+    group by all
+),
+
+over_5_pct as (
+    select customer_id, earliest, latest, balance_pct_change, iff(balance_pct_change >= 5, 1, 0) as is_over_5_pct_increase
+    from percent_changes
+    group by all
+)
+
+select avg(is_over_5_pct_increase) * 100 as over_5_pct_balance_increase_pct 
+from over_5_pct
+
+-- PART C --
+
+-- For this multi-part challenge question - you have been requested to generate the following data elements to help the Data Bank team estimate how much data will need to be provisioned for each option:
+
+-- running customer balance column that includes the impact each transaction
+-- customer balance at the end of each month
+-- minimum, average and maximum values of the running balance for each customer
+
+
+-- TRANSACTION LEVEL RUNNING BALANCE --
+-- At this time, this requires 5,868 rows. Going forward it will require one row per transaction, and updating for every transaction. --
+select customer_id, txn_date, txn_amount,
+       sum(txn_amount) over (partition by customer_id order by txn_date asc) as running_balance
+from customer_transactions
+order by customer_id asc, txn_date asc;
+
+-- MONTH END RUNNING BALANCE --
+-- Same as above, currently requires 1,720 rows or # of unique customer/months. Will only need to be updated at the end of each month. --
+with grouped as (
+    select customer_id,
+       date_trunc(month, txn_date) as txn_month,
+       sum(txn_amount) as monthly_total
+    from customer_transactions
+    group by customer_id, txn_month
+)
+select customer_id,
+       txn_month,
+       monthly_total,
+       sum(monthly_total) over (partition by customer_id order by txn_month) as running_balance
+from grouped
+order by customer_id asc, txn_month asc;
+
+-- Minimum, average and maximum values of the running balance for each customer --
+-- This method would require the transaction level, but maybe would require computation less often as the end metrics are broad aggregations. --
+with all_balances as(
+    select customer_id, txn_date, txn_amount,
+           sum(txn_amount) over (partition by customer_id order by txn_date asc) as running_balance
+    from customer_transactions
+    order by customer_id asc, txn_date asc
+)
+select customer_id, min(running_balance), avg(running_balance), max(running_balance) 
+from all_balances 
+group by all;
