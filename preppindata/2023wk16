@@ -1,0 +1,42 @@
+-- 2023 Wk 16 --
+with easters as (
+    select to_date(easter_sunday, 'DD/MM/YYYY') as easter_sunday, right(easter_sunday, 4)::int as year
+    from pd2023_wk16_easters
+),
+
+full_moons as (
+    select to_date(date, 'DD MMMM YYYY') as full_moon_date, time, right(date, 4)::int as year,
+        case when contains(time, '+') then '1. Blue Moon'
+             when contains(time, '**') then '3. Total Lunar Eclipse'
+             when contains(time, '*') then '2. Partial Lunar Eclipse'
+             else '---' end as special,
+    from pd2023_wk16_full_moon
+),
+
+joined as (
+    select e.*, f.special, abs(datediff(day, easter_sunday, full_moon_date)) as days_to_full_moon
+    from easters e join full_moons f on e.year = f.year
+),
+
+yearly_summary as (
+    select year, min(days_to_full_moon) as days_between_full_moon_and_easter_sunday
+    from joined
+    group by year
+),
+
+almost_there as (
+    select days_between_full_moon_and_easter_sunday, count(*) as num_occurrences, min(year) as min_year, max(year) as max_year
+    from yearly_summary
+    group by days_between_full_moon_and_easter_sunday
+    order by days_between_full_moon_and_easter_sunday
+)
+
+select a.days_between_full_moon_and_easter_sunday as "Days Between Full Moon & Easter Sunday",
+       a.num_occurrences as "Number of Occurences", 
+       max(j.special) as "Most Interesting Event",
+       a.min_year as "Min Year",
+       a.max_year as "Max Year"       
+from almost_there a
+join joined j on a.days_between_full_moon_and_easter_sunday = j.days_to_full_moon
+group by all
+order by a.days_between_full_moon_and_easter_sunday
