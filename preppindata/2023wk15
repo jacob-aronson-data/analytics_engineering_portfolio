@@ -1,0 +1,62 @@
+-- 2023 Week 15 --
+with years_wide as (
+    select row_number() over (order by x_5) as id,
+           * exclude (x, x_1, x_2, x_3, x_13),
+           try_to_number(x_3)  as x_3,
+           try_to_number(x_13) as x_13
+    from pd2023_wk15_easter_dates
+    where x_3 is not null and x_3 not like 'M%'
+),
+
+years_long as(
+    select id, col, yr
+    from years_wide
+    unpivot (
+        yr FOR col IN (
+            x_3, x_4, x_5, x_6, x_7, x_8, x_9, x_10, x_11, x_12, 
+            x_13, x_14, x_15, x_16, x_17, x_18, x_19, x_20, x_21, x_22, 
+            x_23, x_24, x_25, x_26, x_27, x_28, x_29, x_30, x_31, x_32, 
+            x_33, x_34, x_35, x_36, x_37
+        )
+    )
+    where yr > 1000
+),
+
+assign_ids as (select row_number() over (order by x_5) as id,
+           * exclude (x, x_1, x_2, x_3, x_13),
+           try_to_number(x_3)  as x_3,
+           try_to_number(x_13) as x_13
+    from pd2023_wk15_easter_dates),
+
+only_month_date as (select * 
+                    from assign_ids 
+                    where id in (1, 31)),
+
+month_dates_pivoted as (
+    select id, col, val
+    from only_month_date
+    unpivot(
+        val for col in (x_3, x_4, x_5, x_6, x_7, x_8, x_9, x_10, x_11, x_12, 
+            x_13, x_14, x_15, x_16, x_17, x_18, x_19, x_20, x_21, x_22, 
+            x_23, x_24, x_25, x_26, x_27, x_28, x_29, x_30, x_31, x_32, 
+            x_33, x_34, x_35, x_36, x_37)
+        )
+    ),
+
+month_dates_consolidated as (
+    select col,
+           case when replace(col, 'X_', '')::int <= 12 THEN concat('03-', val::varchar)
+                else concat('04-', val::varchar) end as month_year
+    from month_dates_pivoted
+),
+    
+joined as (
+    select *
+    from month_dates_consolidated mdc
+    join years_long yl on mdc.col = yl.col
+)
+
+select date(concat(yr::varchar, '-', month_year)) as "Easter Sunday"
+from joined
+where "Easter Sunday" < current_date()
+order by "Easter Sunday" asc
