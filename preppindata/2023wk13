@@ -1,0 +1,46 @@
+-- 2023 Week 13 --
+with full_year as (
+    select *, 1 as file_date from pd2023_wk08_01 union all
+    select *, 2 as file_date from pd2023_wk08_02 union all
+    select *, 3 as file_date from pd2023_wk08_03 union all
+    select *, 4 as file_date from pd2023_wk08_04 union all
+    select *, 5 as file_date from pd2023_wk08_05 union all
+    select *, 6 as file_date from pd2023_wk08_06 union all
+    select *, 7 as file_date from pd2023_wk08_07 union all
+    select *, 8 as file_date from pd2023_wk08_08 union all
+    select *, 9 as file_date from pd2023_wk08_09 union all
+    select *, 10 as file_date from pd2023_wk08_10 union all
+    select *, 11 as file_date from pd2023_wk08_11 union all
+    select *, 12 as file_date from pd2023_wk08_12
+),
+
+ranked as (
+    select sector, 
+           to_decimal(replace(purchase_price, '$', '')) as purchase_price,
+           rank() over (partition by sector order by file_date asc, id asc) as trade_order
+    from full_year
+    order by sector, trade_order desc
+),
+
+sector_maxes as (
+    select sector, max(trade_order) as sector_max
+    from ranked
+    group by all
+),
+
+only_relevant_100 as (
+    select ranked.* 
+    from ranked
+        join sector_maxes on ranked.sector = sector_maxes.sector
+    where trade_order + 100 > sector_maxes.sector_max
+)
+
+select rank() over (partition by only_relevant_100.sector order by trade_order) as previous_trades,
+       trade_order,
+       only_relevant_100.sector,
+       avg(purchase_price) over
+            (partition by only_relevant_100.sector 
+             order by trade_order asc
+             rows between 2 preceding and current row) as rolling_avg_purchase_price
+from only_relevant_100
+where sector = 'Consumer Services'
