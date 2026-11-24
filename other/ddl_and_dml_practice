@@ -1,0 +1,166 @@
+-- DDL / DML Exercises, as outlined at https://github.com/dbos23/sql_ddl_dml_exercises --
+-----------------------------------------------------------------------------------------
+
+-- UPDATE -- 
+create or replace table target ( 
+     id int, value varchar 
+ ); 
+  
+ insert into target (id, value) 
+ values (1, 'A'),  (2, 'A'), (3, null), (5, 'A'), (8, 'A'), (9, null), (10, null); 
+  
+ create or replace table source ( 
+     id int, value varchar 
+ ); 
+  
+ insert into source (id, value) 
+ values (1, null), (2, 'B'), (4, 'B'), (8, 'B'), (9, 'B'), (10, null), (11, null); 
+
+create or replace table result as (table target);
+
+update result
+set result.value = source.value
+from source
+where result.id = source.id;
+
+select * from result order by id;
+
+-- MERGE -- 
+create or replace table target ( 
+     id int, value varchar 
+ ); 
+  
+ insert into target (id, value) 
+ values (1, 'A'),  (2, 'A'), (3, null), (5, 'A'), (8, 'A'), (9, null), (10, null); 
+  
+ create or replace table source ( 
+     id int, value varchar 
+ ); 
+  
+ insert into source (id, value) 
+ values (1, ''), (2, 'B'), (4, 'B'), (8, 'B'), (9, 'B'), (10, ''), (11, ''); 
+
+create or replace table result as 
+    select ifnull(t.id, s.id) as id,
+           case when s.value is null then t.value else s.value end as value
+    from target t 
+    full outer join source s
+        on t.id = s.id;
+
+select * from result order by id;
+
+-- APPEND --
+create or replace table target ( 
+     id int, value varchar 
+ ); 
+  
+ insert into target (id, value) 
+ values (1, 'A'),  (2, 'A'), (3, null), (5, 'A'), (8, 'A'), (9, null), (10, null); 
+  
+ create or replace table source ( 
+     id int, value varchar 
+ ); 
+  
+ insert into source (id, value) 
+ values (1, ''), (2, 'B'), (4, 'B'), (8, 'B'), (9, 'B'), (10, ''), (11, '');
+
+ create or replace table result as 
+ table target union all table source;
+
+table result;
+
+-- UPDATE NULL FILL --
+create or replace table target ( 
+     id int, value varchar 
+ ); 
+  
+ insert into target (id, value) 
+ values (1, 'A'),  (2, 'A'), (3, null), (5, 'A'), (8, 'A'), (9, null), (10, null); 
+  
+ create or replace table source ( 
+     id int, value varchar 
+ ); 
+  
+ insert into source (id, value) 
+ values (1, ''), (2, 'B'), (4, 'B'), (8, 'B'), (9, 'B'), (10, ''), (11, ''); 
+
+create or replace table result as table target;
+
+update result
+set result.value = source.value
+from source
+where source.id = result.id and result.value is null;
+
+select * from result order by id;
+
+-- MERGE NULL FILL
+create or replace table target ( 
+     id int, value varchar 
+ ); 
+  
+ insert into target (id, value) 
+ values (1, 'A'),  (2, 'A'), (3, null), (5, 'A'), (8, 'A'), (9, null), (10, null); 
+  
+ create or replace table source ( 
+     id int, value varchar 
+ ); 
+  
+ insert into source (id, value) 
+ values (1, ''), (2, 'B'), (4, 'B'), (8, 'B'), (9, 'B'), (10, ''), (11, ''); 
+
+ create or replace table result as 
+    select ifnull(t.id, s.id) as id,
+           case when t.value is null then s.value else t.value end as value
+    from target t 
+    full outer join source s
+        on t.id = s.id;
+
+select * from result order by id;
+
+-- UPDATE OVERRIDE
+create or replace table target ( 
+     id int, value varchar 
+ ); 
+  
+ insert into target (id, value) 
+ values (1, 'A'),  (2, 'A'), (3, null), (5, 'A'), (8, 'A'), (9, null), (10, null); 
+  
+ create or replace table source ( 
+     id int, value varchar 
+ ); 
+  
+ insert into source (id, value) 
+ values (1, null), (2, 'B'), (4, 'B'), (8, 'B'), (9, 'B'), (10, null), (11, null); 
+
+create or replace table result as table target;
+
+update result
+set result.value = source.value
+from source
+where source.id = result.id and source.value is not null;
+
+select * from result order by id;
+
+-- MERGE OVERRIDE -- 
+create or replace table target ( 
+     id int, value varchar 
+ ); 
+  
+ insert into target (id, value) 
+ values (1, 'A'),  (2, 'A'), (3, null), (5, 'A'), (8, 'A'), (9, null), (10, null); 
+  
+ create or replace table source ( 
+     id int, value varchar 
+ ); 
+  
+ insert into source (id, value) 
+ values (1, null), (2, 'B'), (4, 'B'), (8, 'B'), (9, 'B'), (10, null), (11, null); 
+
+  create or replace table result as 
+    select ifnull(t.id, s.id) as id,
+           case when s.value is not null then s.value else t.value end as value
+    from target t 
+    full outer join source s
+        on t.id = s.id;
+
+select * from result order by id;
