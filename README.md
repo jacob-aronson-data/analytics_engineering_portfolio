@@ -1,9 +1,10 @@
-# 📊 Data Preparation, Transformation & Analytics Portfolio
+# 📊 Jacob Aronson | Analytics Engineering Portfolio
 
 Welcome to my data engineering and analytics portfolio. This repository showcases hands-on work across the modern data preparation lifecycle—ranging from **database schema design (DDL/DML)** and **complex data transformations in SQL and Python** to **end-to-end data pipelines** culminating in BI visualizations.
 
 ![SQL](https://img.shields.io/badge/Language-SQL-336791?style=flat-square&logo=postgresql&logoColor=white)
 ![Python](https://img.shields.io/badge/Language-Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![Pandas](https://img.shields.io/badge/Library-pandas-150458?style=flat-square&logo=pandas&logoColor=white)
 ![Data Prep](https://img.shields.io/badge/Focus-Data_Prep_%26_Transformation-008080?style=flat-square)
 ![Tableau](https://img.shields.io/badge/BI-Tableau-E97627?style=flat-square&logo=tableau&logoColor=white)
 
@@ -17,6 +18,7 @@ Welcome to my data engineering and analytics portfolio. This repository showcase
 | **[`olympics_project`](./olympics_project)** | End-to-End Pipeline | Multi-table joins, historical trend modeling, and Tableau visualization |
 | **[`preppindata`](./preppindata)** | Data Transformation | Rebuilding 2023 Tableau Prep ETL workflows entirely in SQL |
 | **[`leetcodeSQL100`](./leetcodeSQL100)** | Multi-Language Logic | Algorithmic data manipulation in **SQL (100/100)** & **Python (21/100)** |
+| **[`python_charmers`](./python_charmers)** | Python & Pandas | Worked-through Jupyter notebooks covering `pandas` fundamentals (**Lessons 1–9**) |
 | **[`other`](./other)** | Database Engineering | Schema creation (`DDL`) and record manipulation (`DML`) exercises |
 
 ---
@@ -39,10 +41,6 @@ Full-lifecycle analytics projects practicing raw data ingestion, cleaning, analy
 
 ## 🛠️ Data Transformation & Problem Solving (SQL & Python)
 
-### 🔄 2023 Preppin' Data Challenges — [`./preppindata`](./preppindata)
-- **Overview:** Solutions to the 2023 weekly challenges from [Preppin' Data](https://preppindata.blogspot.com/). While originally designed as ETL exercises for Tableau Prep, I challenged myself to solve every workflow purely in SQL.
-- **Key Skills:** Common Table Expressions (CTEs), window functions, pivoting/unpivoting, regex/string parsing, and date manipulation.
-
 ### 🧠 LeetCode Top 100 Data Problems (SQL & Python) — [`./leetcodeSQL100`](./leetcodeSQL100)
 - **Progress Tracker:**
   - **SQL:** `100 / 100` (100%) ✅ `████████████████████`
@@ -51,6 +49,15 @@ Full-lifecycle analytics projects practicing raw data ingestion, cleaning, analy
 - **Key Skills:** 
   - *SQL:* Self-joins, correlated subqueries, ranking functions (`ROW_NUMBER`, `DENSE_RANK`), running totals, and `NULL` handling.
   - *Python:* DataFrame merging/joining, vectorized filtering, `.groupby()` aggregations, window operations (`.shift()`, `.rolling()`, `.rank()`), and missing value imputation.
+
+### 🐼 Python Charmers Pandas Course — [`./python_charmers`](./python_charmers)
+- **Progress Tracker:** **Lessons 1–9 Completed** 🚧
+- **Overview:** Worked-through lesson notebooks following Will Sutton's [Python Charmers Pandas Course](https://github.com/wjsutton/python_charmers). Includes hands-on code exercises and annotated solutions building fluency in Pythonic data wrangling.
+- **Key Skills:** `Series` and `DataFrame` fundamentals, indexing/slicing (`.loc`, `.iloc`), data cleaning, type conversion, filtering, and exploratory data analysis (EDA).
+
+### 🔄 2023 Preppin' Data Challenges — [`./preppindata`](./preppindata)
+- **Overview:** Solutions to the 2023 weekly challenges from [Preppin' Data](https://preppindata.blogspot.com/). While originally designed as ETL exercises for Tableau Prep, I challenged myself to solve every workflow purely in SQL.
+- **Key Skills:** Common Table Expressions (CTEs), window functions, pivoting/unpivoting, regex/string parsing, and date manipulation.
 
 ---
 
