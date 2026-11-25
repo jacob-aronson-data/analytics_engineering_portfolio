@@ -1,0 +1,415 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "id": "7c15594d-e56d-4148-9c93-4ab0bb24a268",
+      "metadata": {
+        "id": "7c15594d-e56d-4148-9c93-4ab0bb24a268"
+      },
+      "source": [
+        "# Python Charmers\n",
+        "\n",
+        "## Python Fundamentals Lesson 2: Packages\n",
+        "\n",
+        "### Lesson Overview\n",
+        "- **Objective:** This lesson gets you started with the basics of installing and using packages in Python.\n",
+        "- **Source materials:** Original content\n",
+        "- **Prerequisites:** [Lesson 1: Variables](./fundamentals-01-variables.ipynb)\n",
+        "- **Duration:** 15 mins"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "id": "c873597f-8ed9-4c51-8b0b-5a23d96e80bb",
+      "metadata": {
+        "id": "c873597f-8ed9-4c51-8b0b-5a23d96e80bb"
+      },
+      "source": [
+        "## Python Packages\n",
+        "\n",
+        "A package in Python is like a toolbox that contains a variety of tools (called functions and modules) which you can use to perform specific tasks more easily and efficiently.\n",
+        "\n",
+        "These packages are created by other developers and can be installed and used in your own Python programs.\n",
+        "\n",
+        "For data analysts, packages are particularly useful because they provide specialized tools and functions that are tailored for data analysis tasks.\n",
+        "\n",
+        "Let's take the example of the **pandas** library/package:\n",
+        "- **Data Handling and Manipulation**: Pandas makes it easy to handle and manipulate data. It provides functions to read data from various file formats (like CSV, Excel, etc.), clean data, and transform it into a useful format.\n",
+        "- **Data Analysis**: With pandas, you can perform complex data analysis tasks with just a few lines of code. It offers functionalities for grouping data, calculating statistics, and performing aggregations.\n",
+        "- **Efficiency**: Writing the code for all these tasks from scratch would be time-consuming and error-prone. Pandas provides a tested and optimized set of functions that can save a lot of time and effort.\n",
+        "\n",
+        "### Not all packages are installed by default\n",
+        "\n",
+        "Installing a package using pip.\n",
+        "\n",
+        "`pip`is the package installer for Python. You can use it to install packages from the Python Package Index (PyPI).\n",
+        "\n",
+        "Basic command: `pip install package_name`"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "id": "6c095c8e-1870-43fa-8f91-2834652609b6",
+      "metadata": {
+        "id": "6c095c8e-1870-43fa-8f91-2834652609b6"
+      },
+      "outputs": [],
+      "source": [
+        "# Exercise 1: Install Pandas via Terminal\n",
+        "\n",
+        "# Open a Terminal window\n",
+        "# - File > New > Terminal\n",
+        "\n",
+        "# Enter the following command:\n",
+        "# pip install pandas\n",
+        "\n",
+        "# Verify the code below runs successfully and you see some data.\n",
+        "# You may need to re-open this notebook for the install to work."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 3,
+      "id": "eaaf501d-bed6-4bba-872e-fc33caeeee86",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "eaaf501d-bed6-4bba-872e-fc33caeeee86",
+        "outputId": "f46d2a7a-fb77-486a-d509-02c7e00fa23b"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "   vendorid     tpep_pickup_datetime    tpep_dropoff_datetime  \\\n",
+            "0         2  2019-10-23T16:39:42.000  2019-10-23T17:14:10.000   \n",
+            "1         1  2019-10-23T16:32:08.000  2019-10-23T16:45:26.000   \n",
+            "2         2  2019-10-23T16:08:44.000  2019-10-23T16:21:11.000   \n",
+            "3         2  2019-10-23T16:22:44.000  2019-10-23T16:43:26.000   \n",
+            "4         2  2019-10-23T16:45:11.000  2019-10-23T16:58:49.000   \n",
+            "\n",
+            "   passenger_count  trip_distance  ratecodeid store_and_fwd_flag  \\\n",
+            "0                1           7.93           1                  N   \n",
+            "1                1           2.00           1                  N   \n",
+            "2                1           1.36           1                  N   \n",
+            "3                1           1.00           1                  N   \n",
+            "4                1           1.96           1                  N   \n",
+            "\n",
+            "   pulocationid  dolocationid  payment_type  fare_amount  extra  mta_tax  \\\n",
+            "0           138           170             1         29.5    1.0      0.5   \n",
+            "1            11            26             1         10.5    1.0      0.5   \n",
+            "2           163           162             1          9.5    1.0      0.5   \n",
+            "3           170           163             1         13.0    1.0      0.5   \n",
+            "4           163           236             1         10.5    1.0      0.5   \n",
+            "\n",
+            "   tip_amount  tolls_amount  improvement_surcharge  total_amount  \\\n",
+            "0        7.98          6.12                    0.3         47.90   \n",
+            "1        0.00          0.00                    0.3         12.30   \n",
+            "2        2.00          0.00                    0.3         15.80   \n",
+            "3        4.32          0.00                    0.3         21.62   \n",
+            "4        0.50          0.00                    0.3         15.30   \n",
+            "\n",
+            "   congestion_surcharge  \n",
+            "0                   2.5  \n",
+            "1                   0.0  \n",
+            "2                   2.5  \n",
+            "3                   2.5  \n",
+            "4                   2.5  \n"
+          ]
+        }
+      ],
+      "source": [
+        "import pandas as pd\n",
+        "data = pd.read_csv('2019_Yellow_Taxi_Trip_Data.csv')\n",
+        "print(data.head())"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "id": "83eb3a41-7b72-4306-ab95-e6e5334e816a",
+      "metadata": {
+        "id": "83eb3a41-7b72-4306-ab95-e6e5334e816a"
+      },
+      "source": [
+        "Alternatively you can install packages from the notebook"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "id": "81048a79-5012-4327-8b64-2347c81a4d94",
+      "metadata": {
+        "id": "81048a79-5012-4327-8b64-2347c81a4d94"
+      },
+      "outputs": [],
+      "source": [
+        "# Exercise 2: Install Numpy via Notebook\n",
+        "\n",
+        "# The script below will allow you to execute a terminal command here in the notebook\n",
+        "#  - sys is part of Python's standard library and provides access to variables used or maintained by the Python interpreter\n",
+        "#  - sys.executable holds the path to the Python interpreter that your Jupyter notebook is using\n",
+        "#  - '-m' is a flag is used with the Python interpreter to run a 'pip' as a script, i.e to install the package\n",
+        "\n",
+        "import sys\n",
+        "!{sys.executable} -m pip install numpy"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "id": "a3edfbc1-0e5a-4b7f-b3d9-a707aa309ed7",
+      "metadata": {
+        "id": "a3edfbc1-0e5a-4b7f-b3d9-a707aa309ed7"
+      },
+      "source": [
+        "## Package Versions\n",
+        "\n",
+        "Packages in Python, as in most software, have different versions for several important reasons:\n",
+        "\n",
+        "- Feature Updates and Improvements\n",
+        "- Bug Fixes\n",
+        "- Security Updates, and many more\n",
+        "\n",
+        "Different versions allow users to choose which version best fits their needs. For instance, a user may stick with an older, stable release for a critical application, while another might prefer the latest version for access to the newest features. Managing these versions and understanding the implications of updating (or not updating) is an important aspect of working with Python packages.\n",
+        "\n",
+        "### Check a Package's Version\n",
+        "\n",
+        "Python packages often have their version information accessible via a __version__ attribute.\n",
+        "To check the version of a package, you first need to import it and then access this attribute."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 4,
+      "id": "719e2846-967b-4df7-be77-3dd195989bf4",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "719e2846-967b-4df7-be77-3dd195989bf4",
+        "outputId": "99d31967-54a5-4ce1-a3b0-532b1ffa7341"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "2.4.6\n"
+          ]
+        }
+      ],
+      "source": [
+        "# Check Numpy's version\n",
+        "import numpy\n",
+        "print(numpy.__version__)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "id": "1462b761-0095-484b-a2c8-311864f75b84",
+      "metadata": {
+        "id": "1462b761-0095-484b-a2c8-311864f75b84"
+      },
+      "source": [
+        "### Downgrading a Package\n",
+        "\n",
+        "Sometimes, you might need to downgrade a package to ensure compatibility with other packages or specific codebases. To downgrade, specify the package name along with the desired version. For example:\n",
+        "\n",
+        "pip install package_name==1.23.5"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "id": "787ba38b-55a5-4f4e-a6b9-b0ca34aea0df",
+      "metadata": {
+        "id": "787ba38b-55a5-4f4e-a6b9-b0ca34aea0df"
+      },
+      "outputs": [],
+      "source": [
+        "# Exercise: Downgrade numpy to version 1.18.5\n",
+        "# Using:\n",
+        "# - Terminal: pip install numpy==1.18.5\n",
+        "# - Notebook:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 5,
+      "id": "a1f87b17-beb0-40cb-866f-2a28eb1c037c",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "a1f87b17-beb0-40cb-866f-2a28eb1c037c",
+        "outputId": "87c8f1fa-e117-42da-dbe7-aa98657d1804"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\u001b[31mERROR: Invalid requirement: 'numpy==1.18.': Expected comma (within version specifier), semicolon (after version specifier) or end\n",
+            "    numpy==1.18.\n",
+            "         ~~~~~~^\u001b[0m\u001b[31m\n",
+            "\u001b[0m"
+          ]
+        }
+      ],
+      "source": [
+        "import sys\n",
+        "!{sys.executable} -m pip install numpy==1.18.\n",
+        "# Remember to restart the Jupyter kernel after upgrading to use the updated package."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "id": "698e725a-1f4b-412a-8af2-f33ca445faad",
+      "metadata": {
+        "id": "698e725a-1f4b-412a-8af2-f33ca445faad"
+      },
+      "source": [
+        "### Upgrading a Package\n",
+        "\n",
+        "Upgrading a package ensures that you have the latest features and bug fixes. Use pip with the --upgrade flag to update a package. For example:\n",
+        "\n",
+        "pip install --upgrade package_name"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "id": "c9413e8f-2125-4d6e-8c67-e915fd1a6045",
+      "metadata": {
+        "id": "c9413e8f-2125-4d6e-8c67-e915fd1a6045"
+      },
+      "outputs": [],
+      "source": [
+        "# Exercise: Upgrade Numpy to latest version\n",
+        "# Either in Terminal or in the script below\n",
+        "\n",
+        "import sys\n",
+        "!{sys.executable} -m [insert your code here]"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "id": "4914f35f-d2ef-4080-bea4-201d5849723c",
+      "metadata": {
+        "id": "4914f35f-d2ef-4080-bea4-201d5849723c"
+      },
+      "source": [
+        "## Mini Project: Dependency Detective\n",
+        "\n",
+        "When you install a Python package, such as pandas, it may not work in isolation. It often relies on other packages (dependencies) for its operation. These dependencies are automatically installed along with the package you install. Understanding these dependencies is crucial for:\n",
+        "\n",
+        "- Compatibility\n",
+        "- Debugging\n",
+        "- Optimization\n",
+        "\n",
+        "We can see dependencies using the `requires` function from the `importlib.metadata` package.\n",
+        "\n",
+        "Pandas and numpy are two common packages for data analysis, can you create a list of all the dependencies?"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 20,
+      "id": "374243e5-0394-46fa-a417-e2f3f372c137",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "374243e5-0394-46fa-a417-e2f3f372c137",
+        "outputId": "416c2e4c-44e5-4b2c-dfa5-94f26e7d6b29"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "['numpy>=1.22.4; python_version < \"3.11\"', 'numpy>=1.23.2; python_version == \"3.11\"', 'numpy>=1.26.0; python_version >= \"3.12\"', 'python-dateutil>=2.8.2', 'pytz>=2020.1', 'tzdata>=2022.7', 'hypothesis>=6.46.1; extra == \"test\"', 'pytest>=7.3.2; extra == \"test\"', 'pytest-xdist>=2.2.0; extra == \"test\"', 'pyarrow>=10.0.1; extra == \"pyarrow\"', 'bottleneck>=1.3.6; extra == \"performance\"', 'numba>=0.56.4; extra == \"performance\"', 'numexpr>=2.8.4; extra == \"performance\"', 'scipy>=1.10.0; extra == \"computation\"', 'xarray>=2022.12.0; extra == \"computation\"', 'fsspec>=2022.11.0; extra == \"fss\"', 's3fs>=2022.11.0; extra == \"aws\"', 'gcsfs>=2022.11.0; extra == \"gcp\"', 'pandas-gbq>=0.19.0; extra == \"gcp\"', 'odfpy>=1.4.1; extra == \"excel\"', 'openpyxl>=3.1.0; extra == \"excel\"', 'python-calamine>=0.1.7; extra == \"excel\"', 'pyxlsb>=1.0.10; extra == \"excel\"', 'xlrd>=2.0.1; extra == \"excel\"', 'xlsxwriter>=3.0.5; extra == \"excel\"', 'pyarrow>=10.0.1; extra == \"parquet\"', 'pyarrow>=10.0.1; extra == \"feather\"', 'tables>=3.8.0; extra == \"hdf5\"', 'pyreadstat>=1.2.0; extra == \"spss\"', 'SQLAlchemy>=2.0.0; extra == \"postgresql\"', 'psycopg2>=2.9.6; extra == \"postgresql\"', 'adbc-driver-postgresql>=0.8.0; extra == \"postgresql\"', 'SQLAlchemy>=2.0.0; extra == \"mysql\"', 'pymysql>=1.0.2; extra == \"mysql\"', 'SQLAlchemy>=2.0.0; extra == \"sql-other\"', 'adbc-driver-postgresql>=0.8.0; extra == \"sql-other\"', 'adbc-driver-sqlite>=0.8.0; extra == \"sql-other\"', 'beautifulsoup4>=4.11.2; extra == \"html\"', 'html5lib>=1.1; extra == \"html\"', 'lxml>=4.9.2; extra == \"html\"', 'lxml>=4.9.2; extra == \"xml\"', 'matplotlib>=3.6.3; extra == \"plot\"', 'jinja2>=3.1.2; extra == \"output-formatting\"', 'tabulate>=0.9.0; extra == \"output-formatting\"', 'PyQt5>=5.15.9; extra == \"clipboard\"', 'qtpy>=2.3.0; extra == \"clipboard\"', 'zstandard>=0.19.0; extra == \"compression\"', 'dataframe-api-compat>=0.1.7; extra == \"consortium-standard\"', 'adbc-driver-postgresql>=0.8.0; extra == \"all\"', 'adbc-driver-sqlite>=0.8.0; extra == \"all\"', 'beautifulsoup4>=4.11.2; extra == \"all\"', 'bottleneck>=1.3.6; extra == \"all\"', 'dataframe-api-compat>=0.1.7; extra == \"all\"', 'fastparquet>=2022.12.0; extra == \"all\"', 'fsspec>=2022.11.0; extra == \"all\"', 'gcsfs>=2022.11.0; extra == \"all\"', 'html5lib>=1.1; extra == \"all\"', 'hypothesis>=6.46.1; extra == \"all\"', 'jinja2>=3.1.2; extra == \"all\"', 'lxml>=4.9.2; extra == \"all\"', 'matplotlib>=3.6.3; extra == \"all\"', 'numba>=0.56.4; extra == \"all\"', 'numexpr>=2.8.4; extra == \"all\"', 'odfpy>=1.4.1; extra == \"all\"', 'openpyxl>=3.1.0; extra == \"all\"', 'pandas-gbq>=0.19.0; extra == \"all\"', 'psycopg2>=2.9.6; extra == \"all\"', 'pyarrow>=10.0.1; extra == \"all\"', 'pymysql>=1.0.2; extra == \"all\"', 'PyQt5>=5.15.9; extra == \"all\"', 'pyreadstat>=1.2.0; extra == \"all\"', 'pytest>=7.3.2; extra == \"all\"', 'pytest-xdist>=2.2.0; extra == \"all\"', 'python-calamine>=0.1.7; extra == \"all\"', 'pyxlsb>=1.0.10; extra == \"all\"', 'qtpy>=2.3.0; extra == \"all\"', 'scipy>=1.10.0; extra == \"all\"', 's3fs>=2022.11.0; extra == \"all\"', 'SQLAlchemy>=2.0.0; extra == \"all\"', 'tables>=3.8.0; extra == \"all\"', 'tabulate>=0.9.0; extra == \"all\"', 'xarray>=2022.12.0; extra == \"all\"', 'xlrd>=2.0.1; extra == \"all\"', 'xlsxwriter>=3.0.5; extra == \"all\"', 'zstandard>=0.19.0; extra == \"all\"']\n"
+          ]
+        }
+      ],
+      "source": [
+        "# Import the `requires` function from the `importlib.metadata` package\n",
+        "\n",
+        "import importlib.metadata\n",
+        "\n",
+        "# Create two variables that contain lists of dependencies for pandas and numpy\n",
+        "\n",
+        "pandas_requirements = importlib.metadata.requires('pandas')\n",
+        "\n",
+        "numpy_requirements = importlib.metadata.requires('numpy') or []\n",
+        "\n",
+        "# Combine the dependencies lists\n",
+        "\n",
+        "full_requirements = pandas_requirements + numpy_requirements\n",
+        "\n",
+        "# Convert to a set to remove duplicates and then back to a list\n",
+        "\n",
+        "final_requirements = []\n",
+        "\n",
+        "for i in full_requirements:\n",
+        "  if not i in final_requirements:\n",
+        "    final_requirements.append(i)\n",
+        "\n",
+        "print(final_requirements)\n",
+        "\n",
+        "# # Print combined list of unique dependencies\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "id": "536b31a4-3f11-4848-a990-e3d44ab4413e",
+      "metadata": {
+        "jp-MarkdownHeadingCollapsed": true,
+        "id": "536b31a4-3f11-4848-a990-e3d44ab4413e"
+      },
+      "source": [
+        "## Additional Resources\n",
+        "- 📰 **PyPi** - Python Package Index https://pypi.org/\n",
+        "- 📰 **PyPi** Installing Packages https://packaging.python.org/en/latest/tutorials/installing-packages/\n",
+        "- 📺 **Core Electronics** Python Workshop - Installing Packages https://www.youtube.com/watch?v=SrX5yo4KKGM\n",
+        "\n",
+        "## Summary\n",
+        "\n",
+        "Packages in Python allow you to perform a whole range of tasks using a few premade functions. The knowledge gained here will be repeated as we build scripts in Python.\n",
+        "\n",
+        "Remember, the world of Python packages is ever-evolving, with new packages and updates being released regularly. Staying informed of new package release to increase your capabilities with Python.\n",
+        "\n",
+        "## Next Lesson\n",
+        "\n",
+        "**[Lesson 3: Data Wrangling](./fundamentals-03-data_wrangling-p1.ipynb)**\n",
+        "In this lesson we'll be working with pandas and numpy to read, write and manipulate datasets."
+      ]
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3 (ipykernel)",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.10.10"
+    },
+    "colab": {
+      "provenance": []
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
